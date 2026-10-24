@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>İsmail Mert Doğru</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="İsmail Mert Doğru – PCB tasarımı ve gömülü sistemler portföyü">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Yerleşim: tek sayfa, üç görünüm (ana sayfa · projeler · proje). 3D render'daki mavi lehim maskesi, ENIG altını vurgu, serigrafi gibi mono etiketler. */
+:root {
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --ink: #111a2e;
+  --muted: #576178;
+  --line: #d8dde8;
+  --mask: #1f3c88;
+  --gold: #8f6410;
+  --gold-soft: #f1e6cc;
+  --grid: rgba(17, 26, 46, 0.08);
+  --overlay: rgba(8, 12, 24, 0.88);
+  --font-display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --radius: 6px;
+  --wrap: 1080px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b111e; --surface: #121a2b; --ink: #e7ebf3; --muted: #9aa4b8; --line: #243049;
+    --mask: #5b80e0; --gold: #d8a84a; --gold-soft: #33290f; --grid: rgba(231, 235, 243, 0.06);
+    --overlay: rgba(4, 7, 14, 0.92);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b111e; --surface: #121a2b; --ink: #e7ebf3; --muted: #9aa4b8; --line: #243049;
+  --mask: #5b80e0; --gold: #d8a84a; --gold-soft: #33290f; --grid: rgba(231, 235, 243, 0.06);
+  --overlay: rgba(4, 7, 14, 0.92);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+.mono { font-family: var(--font-mono); }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Üst çubuk */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.brand { font-family: var(--font-display); font-weight: 600; font-size: 17px; text-decoration: none; letter-spacing: 0.01em; }
+.nav { display: flex; gap: 4px; }
+.nav button {
+  font: 500 14px/1 var(--font-body);
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.nav button:hover { color: var(--ink); }
+.nav button[aria-current="page"] { color: var(--ink); border-color: var(--line); background: var(--surface); }
+
+main { padding-block: 40px 72px; }
+.view { display: grid; gap: 56px; }
+
+/* Ana sayfa */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 48px;
+  align-items: center;
+}
+.hero-text { display: grid; gap: 20px; min-width: 0; }
+.hero h1 { font-size: clamp(40px, 6vw, 64px); letter-spacing: -0.01em; }
+.hero .tagline { font-size: clamp(19px, 2.2vw, 22px); color: var(--ink); max-width: 30ch; line-height: 1.4; }
+.hero .bio { color: var(--muted); max-width: 62ch; }
+.hero-figure {
+  margin: 0;
+  position: relative;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  background-image: radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+.hero-figure img { display: block; width: 100%; height: auto; border-radius: 4px; }
+.hero-figure figcaption { margin-top: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.corner { position: absolute; width: 10px; height: 10px; border: 1.5px solid var(--gold); }
+.corner.tl { top: 6px; left: 6px; border-right: 0; border-bottom: 0; }
+.corner.tr { top: 6px; right: 6px; border-left: 0; border-bottom: 0; }
+.corner.bl { bottom: 6px; left: 6px; border-right: 0; border-top: 0; }
+.corner.br { bottom: 6px; right: 6px; border-left: 0; border-top: 0; }
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.facts div { padding: 18px 20px 18px 0; display: grid; gap: 4px; min-width: 0; }
+.facts div + div { padding-left: 20px; border-left: 1px solid var(--line); }
+.facts dt { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: 0; font-weight: 500; }
+
+.contact { display: grid; gap: 14px; }
+.contact h2.eyebrow { font-family: var(--font-mono); font-weight: 400; line-height: 1.6; }
+.contact-row { display: flex; flex-wrap: wrap; gap: 12px 40px; }
+.contact-item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-width: 0; }
+.contact-k { font-size: 14px; color: var(--muted); }
+.contact-v { font-weight: 500; overflow-wrap: anywhere; user-select: all; }
+a.contact-v { user-select: auto; text-decoration: none; border-bottom: 1px solid var(--line); }
+a.contact-v:hover { border-bottom-color: var(--gold); }
+.copy {
+  font: 500 13px/1 var(--font-body);
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.copy:hover { border-color: var(--gold); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 600 15px/1 var(--font-body);
+  color: var(--bg);
+  background: var(--mask);
+  border: 0;
+  border-radius: var(--radius);
+  padding: 13px 18px;
+  cursor: pointer;
+  text-decoration: none;
+  justify-self: start;
+}
+.btn:hover { filter: brightness(1.1); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 500 14px/1 var(--font-body);
+  color: var(--muted);
+  background: none; border: 0; padding: 6px 0; cursor: pointer;
+  justify-self: start;
+}
+.btn-ghost:hover { color: var(--ink); }
+
+/* Projeler */
+.section-head { display: grid; gap: 8px; }
+.section-head h2 { font-size: clamp(28px, 4vw, 36px); }
+.section-head p { color: var(--muted); max-width: 60ch; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+.card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.card-media {
+  aspect-ratio: 4 / 3;
+  max-width: 100%;
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size: 14px 14px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.card-media img { width: 100%; height: 100%; object-fit: contain; }
+.card-body { display: grid; gap: 10px; padding: 18px 20px 20px; align-content: start; }
+.card-body h3 { font-size: 21px; }
+.card-body p { color: var(--muted); font-size: 15px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--gold-soft);
+  color: var(--ink);
+}
+.card-cta { font-weight: 600; font-size: 14px; color: var(--gold); }
+
+/* Proje sayfası */
+.project-head { display: grid; gap: 14px; }
+.project-head h1 { font-size: clamp(32px, 5vw, 48px); }
+.project-head .lead { font-size: 18px; max-width: 62ch; }
+.result {
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center;
+  font-family: var(--font-mono); font-size: 13px;
+}
+.result strong { font-weight: 500; color: var(--gold); }
+
+.spec {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+.spec div { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.spec div:nth-child(odd) { border-right: 1px solid var(--line); }
+.spec div:nth-last-child(-n+2) { border-bottom: 0; }
+.spec dt { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.spec dd { margin: 0; min-width: 0; }
+
+.block { display: grid; gap: 18px; }
+.block > h2 { font-size: 26px; display: flex; align-items: baseline; gap: 12px; }
+.block > h2 .eyebrow { font-size: 12px; }
+.prose { display: grid; gap: 14px; max-width: 68ch; }
+.prose ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+
+.bom-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.bom { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 560px; }
+.bom th, .bom td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.bom tr:last-child td { border-bottom: 0; }
+.bom th { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+.bom td:first-child { font-family: var(--font-mono); font-size: 14px; color: var(--gold); white-space: nowrap; }
+.bom .note { display: block; color: var(--muted); font-size: 14px; }
+
+.why { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.why div { display: grid; gap: 6px; padding: 16px 18px; border-left: 2px solid var(--gold); min-width: 0; }
+.why h3 { font-family: var(--font-body); font-size: 16px; font-weight: 600; }
+.why p { color: var(--muted); font-size: 15px; }
+
+.shots { display: grid; gap: 20px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.shot { margin: 0; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.shot button {
+  display: block; padding: 0; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); cursor: zoom-in; overflow: hidden;
+}
+.shot img { display: block; width: 100%; height: auto; transition: transform 0.25s ease; }
+.shot button:hover img { transform: scale(1.02); }
+.shot figcaption { font-size: 14px; color: var(--muted); }
+.shot figcaption b { font-family: var(--font-mono); font-weight: 500; color: var(--ink); margin-right: 6px; }
+.shot.wide { grid-column: 1 / -1; }
+
+.revs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.rev-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; justify-self: start;
+  border: 1px solid var(--line); color: var(--muted);
+}
+.rev-label.fixed { border-color: var(--gold); color: var(--gold); }
+
+.timeline { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; max-width: 68ch; }
+.timeline li { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.timeline li:last-child { border-bottom: 0; }
+.timeline .k { font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding-top: 2px; }
+
+.project-foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--line); }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 22px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* Büyütülmüş görsel */
+.lightbox {
+  position: fixed; inset: 0; z-index: 20;
+  background: var(--overlay);
+  display: grid; place-items: center;
+  padding: calc(56px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+}
+.lightbox figure { margin: 0; display: grid; gap: 12px; justify-items: center; max-width: 100%; }
+.lightbox img { max-width: min(1100px, 100%); max-height: calc(100vh - 140px); width: auto; height: auto; border-radius: 4px; }
+.lightbox figcaption { color: #e6ede8; font-size: 14px; text-align: center; max-width: 70ch; }
+.lightbox-close {
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  font: 500 14px/1 var(--font-body);
+  color: #e6ede8; background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25); border-radius: var(--radius);
+  padding: 10px 14px; cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  main { padding-block: 28px 56px; }
+  .view { gap: 44px; }
+  .hero { grid-template-columns: 1fr; gap: 28px; }
+  .hero-figure { order: -1; }
+  .facts { grid-template-columns: 1fr; }
+  .facts div, .facts div + div { padding: 14px 0; border-left: 0; }
+  .facts div + div { border-top: 1px solid var(--line); }
+  .spec { grid-template-columns: 1fr; }
+  .spec div { grid-template-columns: 1fr; gap: 2px; }
+  .spec div:nth-child(odd) { border-right: 0; }
+  .spec div:nth-last-child(2) { border-bottom: 1px solid var(--line); }
+  .why, .shots, .revs { grid-template-columns: 1fr; }
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card, .shot img { transition: none; }
+  .card:hover { transform: none; }
+  .shot button:hover img { transform: none; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#hakkimda" data-go="hakkimda">İsmail Mert Doğru</a>
+    <nav class="nav" aria-label="Sayfalar">
+      <button type="button" id="nav-hakkimda" data-go="hakkimda">Hakkımda</button>
+      <button type="button" id="nav-projeler" data-go="projeler">Projeler</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Ana sayfa -->
+  <section class="view" id="view-hakkimda" aria-label="Hakkımda">
+    <div class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Elektrik-Elektronik Mühendisliği · Pamukkale Üniversitesi</p>
+        <h1>İsmail Mert Doğru</h1>
+        <p class="tagline">Elektronik kart tasarımı ve gömülü sistemler üzerine çalışıyorum.</p>
+        <p class="bio">Pamukkale Üniversitesi Elektrik-Elektronik Mühendisliği 2. sınıf öğrencisiyim. Roket takımımız Hazar Aerospace'te uçuş kontrol bilgisayarının donanım tasarımından sorumluyum. Takımımız TEKNOFEST 2026 Roket Yarışması'nda finalist oldu ve Yüksek İrtifa kategorisinde 7. sırayı aldı. Bu sezon kartı geliştirerek yeniden yarışıyoruz ve IREC 2027'ye başvurduk.</p>
+        <button type="button" class="btn" data-go="projeler">Projeleri gör <span aria-hidden="true">→</span></button>
+      </div>
+      <figure class="hero-figure">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <img src="img/6.jpg" alt="Montajı tamamlanmış uçuş kontrol bilgisayarı, Rev 2" width="960" height="1280">
+        <figcaption>Uçuş kontrol bilgisayarı · Rev 2 · 65 × 80 mm · 2 katman</figcaption>
+      </figure>
+    </div>
+
+    <dl class="facts">
+      <div><dt>TEKNOFEST 2026</dt><dd>Finalist · Yüksek İrtifa 7.</dd></div>
+      <div><dt>Odak</dt><dd>PCB tasarımı, gömülü sistemler</dd></div>
+      <div><dt>Araçlar</dt><dd>EasyEDA, Altium (öğreniyorum), STM32</dd></div>
+    </dl>
+
+    <section class="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="eyebrow">İletişim</h2>
+      <div class="contact-row">
+        <div class="contact-item">
+          <span class="contact-k">E-posta</span>
+          <span class="contact-v mono" id="email-text">ismert07@hotmail.com</span>
+          <button type="button" class="copy" id="copy-email" data-copy="ismert07@hotmail.com" data-target="email-text">Kopyala</button>
+        </div>
+        <div class="contact-item">
+          <span class="contact-k">LinkedIn</span>
+          <a class="contact-v" href="https://www.linkedin.com/in/ismail-mert-dogru" target="_blank" rel="noopener">linkedin.com/in/ismail-mert-dogru <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- Projeler -->
+  <section class="view" id="view-projeler" aria-label="Projeler" hidden>
+    <div class="section-head">
+      <p class="eyebrow">Projeler</p>
+      <h2>Tasarladığım kartlar</h2>
+      <p>Tamamlanan projeler. Yeni kartlar bittikçe buraya eklenecek.</p>
+    </div>
+    <div class="cards">
+      <button type="button" class="card" data-go="ukb-2026" aria-label="TEKNOFEST 2026 Uçuş Kontrol Bilgisayarı projesini aç">
+        <div class="card-media"><img src="img/7.jpg" alt="" width="978" height="767"></div>
+        <div class="card-body">
+          <p class="eyebrow">TEKNOFEST 2026 · Hazar Aerospace</p>
+          <h3>Uçuş Kontrol Bilgisayarı</h3>
+          <p>Roketin irtifa ölçümünü, LoRa telemetrisini, veri kaydını ve iki kanallı ayrılmayı yöneten 65 × 80 mm'lik kart. Finalist, Yüksek İrtifa 7.</p>
+          <div class="tags"><span class="tag">EasyEDA</span><span class="tag">STM32F407</span><span class="tag">LoRa</span><span class="tag">2 katman</span></div>
+          <span class="card-cta">Projeyi aç →</span>
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <!-- Proje: TEKNOFEST 2026 UKB -->
+  <article class="view" id="view-ukb-2026" aria-label="TEKNOFEST 2026 Uçuş Kontrol Bilgisayarı" hidden>
+    <button type="button" class="btn-ghost" data-go="projeler"><span aria-hidden="true">←</span> Projelere dön</button>
+
+    <div class="project-head">
+      <p class="eyebrow">TEKNOFEST 2026 · Hazar Aerospace · Aralık 2025 – Ekim 2026</p>
+      <h1>Uçuş Kontrol Bilgisayarı</h1>
+      <p class="lead">Roket takımımızın TEKNOFEST 2026 Roket Yarışması'nda kullandığı uçuş kontrol bilgisayarı. İrtifa ve ivme ölçümünü, LoRa ile yer istasyonuna telemetriyi, microSD karta veri kaydını ve iki kanallı ayrılma sistemini tek kartta topluyor.</p>
+      <p class="result"><strong>Finalist</strong><span>Yüksek İrtifa kategorisinde 7.</span><span>Tahmini tepe irtifası ≈ 7400 m</span></p>
+    </div>
+
+    <figure class="shot wide">
+      <button type="button" data-zoom><img src="img/7.jpg" alt="Kartın 3D görünümü" width="978" height="767"></button>
+      <figcaption><b>Şekil 1</b>Kartın 3D görünümü, Rev 2</figcaption>
+    </figure>
+
+    <dl class="spec">
+      <div><dt>Rolüm</dt><dd>Donanım tasarımının tamamı: şematik, PCB yerleşimi, montaj ve test. Yazılımı takım arkadaşım geliştirdi.</dd></div>
+      <div><dt>Takım</dt><dd>Hazar Aerospace, Pamukkale Üniversitesi</dd></div>
+      <div><dt>Kart</dt><dd>2 katman, 65 × 80 mm, iki revizyon</dd></div>
+      <div><dt>Araç</dt><dd>EasyEDA</dd></div>
+      <div><dt>Dönem</dt><dd>Aralık 2025 – Ekim 2026</dd></div>
+      <div><dt>Yarışma</dt><dd>TEKNOFEST 2026 Roket Yarışması, Yüksek İrtifa kategorisi</dd></div>
+    </dl>
+
+    <section class="block">
+      <h2>Kartın yapısı</h2>
+      <div class="bom-wrap">
+        <table class="bom">
+          <thead><tr><th>Referans</th><th>İşlev</th><th>Parça</th></tr></thead>
+          <tbody>
+            <tr><td>U4</td><td>Mikrodenetleyici</td><td>STM32F407VGT6<span class="note">Cortex-M4F, 168 MHz, LQFP100</span></td></tr>
+            <tr><td>U10</td><td>Barometre</td><td>Bosch BMP580<span class="note">İrtifa ölçümü ve tepe noktası tespiti</span></td></tr>
+            <tr><td>U3</td><td>IMU</td><td>TDK InvenSense ICM-40609-D<span class="note">6 eksen, ±32 g ivmeölçer</span></td></tr>
+            <tr><td>—</td><td>Telemetri</td><td>EBYTE E22-900T30S LoRa modülü<span class="note">SX1262 tabanlı, 868/915 MHz, 30 dBm, u.FL anten çıkışı</span></td></tr>
+            <tr><td>CARD1</td><td>Veri kaydı</td><td>microSD kart yuvası</td></tr>
+            <tr><td>—</td><td>Ayrılma</td><td>MOSFET sürücülü 2 kanal</td></tr>
+            <tr><td>CN1–CN3</td><td>Güç ve bağlantı</td><td>XT30 konnektörler<span class="note">Anahtarlamalı regülatör ve 3.3 V regülatör ile besleme</span></td></tr>
+            <tr><td>SW1, BUZ1</td><td>Arayüz</td><td>DIP anahtar, buzzer<span class="note">Ayrıca SWD programlama başlığı, GPS konnektörü, durum LED'leri, reset ve boot butonları</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Parça seçimleri</h2>
+      <div class="why">
+        <div><h3>STM32F407VGT6</h3><p>168 MHz Cortex-M4F ve FPU. Sensörler, LoRa, GPS ve microSD için yeterli UART, SPI, I2C ve SDIO çevre birimi.</p></div>
+        <div><h3>ICM-40609-D</h3><p>±32 g ivmeölçer aralığı, roketin kalkış ivmesini doyuma girmeden ölçebiliyor.</p></div>
+        <div><h3>E22-900T30S</h3><p>30 dBm çıkış gücüyle uzun menzil. UART üzerinden mikrodenetleyiciye kolayca bağlanıyor.</p></div>
+        <div><h3>microSD</h3><p>Uçuş verisinin telemetriden bağımsız olarak kartta da kaydedilmesi için.</p></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>PCB yerleşimi</h2>
+      <div class="prose">
+        <ul>
+          <li>Bileşenler ve sinyal yolları büyük ölçüde üst katmanda. Alt katman güç dağıtımı ve ek yönlendirme için kullanıldı.</li>
+          <li>Batarya girişinden regülatörlere giden güç yolu geniş hatlarla çekildi.</li>
+          <li>LoRa modülü kartın bir kenarında, XT30 konnektörler kart kenarlarında.</li>
+          <li>Roket içine montaj için dört köşede montaj deliği var.</li>
+        </ul>
+      </div>
+      <div class="shots">
+        <figure class="shot">
+          <button type="button" data-zoom><img src="img/4.jpg" alt="PCB yerleşimi, üst katman" width="1074" height="897" loading="lazy"></button>
+          <figcaption><b>Şekil 2</b>Üst katman yerleşimi</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom><img src="img/5.jpg" alt="PCB yerleşimi, iki katman birlikte" width="1174" height="1008" loading="lazy"></button>
+          <figcaption><b>Şekil 3</b>İki katman birlikte. Kalın mavi hat güç yolu.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Rev 1 → Rev 2</h2>
+      <div class="prose">
+        <p>Rev 1 kartında BMP580 barometreden hiç veri alınamadı. Sorunun en olası kaynağı, sensörün PCB footprint'inin parçayla uyuşmamasıydı.</p>
+        <p>Yarışma takvimi nedeniyle Rev 2'de sensörü hazır bir BMP580 modülüyle bağlayarak sistemi çalışır hale getirdim. Buradan çıkardığım ders: yeni bir footprint, üretime gitmeden önce datasheet'teki önerilen yerleşimle karşılaştırılmalı ve kartın 1:1 çıktısı üzerinde parçayla denenmeli. TEKNOFEST 2027 kartında sensörü doğrulanmış bir footprint ile doğrudan karta yerleştirmeyi hedefliyorum.</p>
+      </div>
+      <div class="revs">
+        <figure class="shot">
+          <span class="rev-label">Rev 1</span>
+          <button type="button" data-zoom><img src="img/2.jpg" alt="Rev 1, montajı tamamlanmış kart" width="960" height="1280" loading="lazy"></button>
+          <figcaption><b>Şekil 4a</b>Rev 1, montajı tamamlanmış kart</figcaption>
+        </figure>
+        <figure class="shot">
+          <span class="rev-label fixed">Rev 2</span>
+          <button type="button" data-zoom><img src="img/6.jpg" alt="Rev 2, BMP580 modülü takılı kart" width="960" height="1280" loading="lazy"></button>
+          <figcaption><b>Şekil 4b</b>Rev 2, BMP580 modülüyle montajı tamamlanmış kart</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Uçuş ve sonuç</h2>
+      <ol class="timeline">
+        <li><span class="k">Telemetri</span><span>Veri uçuş boyunca yer istasyonuna ulaştı.</span></li>
+        <li><span class="k">İrtifa</span><span>Tahmini tepe irtifası yaklaşık 7400 m.</span></li>
+        <li><span class="k">Kurtarma</span><span>Ayrılma gerçekleşmediği için roket kurtarılamadı, karttaki kayıtlı veri elde edilemedi.</span></li>
+        <li><span class="k">Sıralama</span><span>Finalist, Yüksek İrtifa kategorisinde 7.</span></li>
+      </ol>
+      <div class="shots">
+        <figure class="shot">
+          <button type="button" data-zoom><img src="img/3.jpg" alt="Üretimden gelen boş kartlar" width="960" height="1280" loading="lazy"></button>
+          <figcaption><b>Şekil 5</b>Üretimden gelen boş kartlar</figcaption>
+        </figure>
+        <figure class="shot">
+          <button type="button" data-zoom><img src="img/1.jpg" alt="TEKNOFEST 2026 Güneydoğu Roket Yarışması katılım belgesi ve Rev 2 kartı" width="1280" height="872" loading="lazy"></button>
+          <figcaption><b>Şekil 6</b>TEKNOFEST 2026 Güneydoğu katılım belgesi ve Rev 2 kartı</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <div class="project-foot">
+      <button type="button" class="btn-ghost" data-go="projeler"><span aria-hidden="true">←</span> Projelere dön</button>
+      <button type="button" class="btn-ghost" data-go="hakkimda">Hakkımda</button>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>İsmail Mert Doğru · Elektrik-Elektronik Mühendisliği, Pamukkale Üniversitesi</span>
+    <span><span class="mono">ismert07@hotmail.com</span> · <a href="https://www.linkedin.com/in/ismail-mert-dogru" target="_blank" rel="noopener">LinkedIn</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Büyütülmüş görsel" hidden>
+  <button type="button" class="lightbox-close" id="lightbox-close">Kapat</button>
+  <figure>
+    <img id="lightbox-img" src="" alt="">
+    <figcaption id="lightbox-cap"></figcaption>
+  </figure>
+</div>
+
+<script>
+(() => {
+  const views = ['hakkimda', 'projeler', 'ukb-2026'];
+  const navFor = { hakkimda: 'hakkimda', projeler: 'projeler', 'ukb-2026': 'projeler' };
+
+  function show(name, push) {
+    if (!views.includes(name)) name = 'hakkimda';
+    for (const v of views) document.getElementById('view-' + v).hidden = v !== name;
+    for (const btn of document.querySelectorAll('.nav button')) {
+      if (btn.dataset.go === navFor[name]) btn.setAttribute('aria-current', 'page');
+      else btn.removeAttribute('aria-current');
+    }
+    if (push && location.hash.slice(1) !== name) {
+      try { history.pushState(null, '', '#' + name); } catch (e) { /* çerçeve izin vermeyebilir */ }
+    }
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('click', (e) => {
+    const go = e.target.closest('[data-go]');
+    if (go) { e.preventDefault(); show(go.dataset.go, true); return; }
+    const zoom = e.target.closest('[data-zoom]');
+    if (zoom) { openLightbox(zoom); return; }
+    const copy = e.target.closest('[data-copy]');
+    if (copy) copyText(copy);
+  });
+
+  // E-posta kopyalama; pano reddedilirse metni seçili bırakır
+  function copyText(btn) {
+    const done = (label) => {
+      btn.textContent = label;
+      setTimeout(() => { btn.textContent = 'Kopyala'; }, 2000);
+    };
+    const selectTarget = () => {
+      const el = document.getElementById(btn.dataset.target);
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      done('Seçildi, Ctrl+C ile kopyala');
+    };
+    try {
+      navigator.clipboard.writeText(btn.dataset.copy).then(() => done('Kopyalandı'), selectTarget);
+    } catch (err) {
+      selectTarget();
+    }
+  }
+  window.addEventListener('popstate', () => show(location.hash.slice(1), false));
+  window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
+  show(location.hash.slice(1), false);
+
+  // Görsel büyütme
+  const box = document.getElementById('lightbox');
+  const boxImg = document.getElementById('lightbox-img');
+  const boxCap = document.getElementById('lightbox-cap');
+  let lastFocus = null;
+  function openLightbox(btn) {
+    const img = btn.querySelector('img');
+    const cap = btn.closest('figure').querySelector('figcaption');
+    boxImg.src = img.src;
+    boxImg.alt = img.alt;
+    boxCap.textContent = cap ? cap.textContent : '';
+    lastFocus = btn;
+    box.hidden = false;
+    document.getElementById('lightbox-close').focus();
+  }
+  function closeLightbox() {
+    box.hidden = true;
+    boxImg.src = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  box.addEventListener('click', (e) => { if (e.target === box) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !box.hidden) closeLightbox(); });
+})();
+</script>
+</body>
+</html>
